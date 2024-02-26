@@ -5,7 +5,6 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import math
 
-
 def lower_case():
     corpusroot = './US_Inaugural_Addresses'
     inaugural_addresses = {}
