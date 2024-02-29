@@ -193,11 +193,16 @@ def query(qstring):
     english_stopwords = stopwords.words('english')
     query_stemmed = [apply_stemmer_token(token) for token in query_tokens if token not in english_stopwords]
     
-    query_tf = {token: 0 for token in query_stemmed}
+    #query_tf = {token: 0 for token in query_stemmed}
+    #for token in query_stemmed:
+    #    if token in query_tf:
+    #        query_tf[token] += 1
+    query_tf = {}
     for token in query_stemmed:
-        if token in query_tf:
-            query_tf[token] += 1
-
+        if token not in query_tf:
+            query_tf[token] = 0
+        query_tf[token] += 1
+        
     query_log_tf = {}
     for token, term_frequency in query_tf.items():
         if term_frequency > 0:
