@@ -137,7 +137,7 @@ def getidf(token):
     inverse_document_frequency = math.log10(total_docs / document_frequency)
     return inverse_document_frequency
 
-def normalize_values(inaugural_stemmed, raw_term_frequency):
+def magnitude_values(inaugural_stemmed, raw_term_frequency):
     """
     Function that finds the magnitude of the tf-idf values for each doc in the corpus.
 
@@ -146,9 +146,9 @@ def normalize_values(inaugural_stemmed, raw_term_frequency):
         raw_term_frequency: Dictionary with raw term frequency of each token in each doc. 
     
     Returns:
-        normalized_values: Dictionary with the magnitudes of the tf-idf values for each doc. 
+        nmagnitude_values: Dictionary with the magnitudes of the tf-idf values for each doc. 
     """
-    normalized_values = {}
+    magnitudes = {}
     for filename, tokens in inaugural_stemmed.items():
         magnitude = 0
         for token in set(tokens):
@@ -156,8 +156,8 @@ def normalize_values(inaugural_stemmed, raw_term_frequency):
             term_frequency = raw_term_frequency[filename].get(token, 0)
             term_frequency_inverse_document_frequency = (1 + math.log10(term_frequency)) * inverse_document_frequency
             magnitude += term_frequency_inverse_document_frequency ** 2
-        normalized_values[filename] = math.sqrt(magnitude)
-    return normalized_values
+        magnitudes[filename] = math.sqrt(magnitude)
+    return magnitudes
 
 def getweight(filename, token):
     """
@@ -176,7 +176,7 @@ def getweight(filename, token):
         return 0
     inverse_document_frequency = getidf(stemmed_token)
     term_frequency_inverse_document_frequency = (1 + math.log10(term_frequency)) * inverse_document_frequency
-    return term_frequency_inverse_document_frequency / normalized_values[filename]
+    return term_frequency_inverse_document_frequency / magnitudes[filename]
 
 def query(qstring):
     """
@@ -191,8 +191,12 @@ def query(qstring):
     tokenizer = RegexpTokenizer(r'[a-zA-z]+')
     query_tokens = tokenizer.tokenize(qstring.lower())
     english_stopwords = stopwords.words('english')
-    query_stemmed = [apply_stemmer_token(token) for token in query_tokens if token not in english_stopwords]
-    
+    #query_stemmed = [apply_stemmer_token(token) for token in query_tokens if token not in english_stopwords]
+    query_stemmed = []
+    for token in query_tokens:
+        if token not in english_stopwords:
+            query_stemmed.append(apply_stemmer_token(token))
+
     #query_tf = {token: 0 for token in query_stemmed}
     #for token in query_stemmed:
     #    if token in query_tf:
@@ -249,7 +253,7 @@ inaugural_stemmed = apply_stemmer_docs(inaugural_tokens_nostopwords)
 raw_term_frequency = get_raw_term_frequency(inaugural_stemmed)
 #print("raw term frequency", raw_term_frequency['01_washington_1789.txt'])
 
-normalized_values = normalize_values(inaugural_stemmed, raw_term_frequency)
+magnitudes = magnitude_values(inaugural_stemmed, raw_term_frequency)
 
 
 print("%.12f" % getidf('children'))
