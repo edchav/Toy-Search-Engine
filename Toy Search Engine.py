@@ -146,7 +146,7 @@ def magnitude_values(inaugural_stemmed, raw_term_frequency):
         raw_term_frequency: Dictionary with raw term frequency of each token in each doc. 
     
     Returns:
-        nmagnitude_values: Dictionary with the magnitudes of the tf-idf values for each doc. 
+        nmagnitudes: Dictionary with the magnitudes of the tf-idf values for each doc. 
     """
     magnitudes = {}
     for filename, tokens in inaugural_stemmed.items():
@@ -168,7 +168,7 @@ def getweight(filename, token):
         token: A single token (word)
     
     Returns: 
-        term_frequency_inverse_document_frequency / normalized_values[filename]: The normalized tf-idf value of the token in the doc. 
+        term_frequency_inverse_document_frequency / magnitudes[filename]: The normalized tf-idf value of the token in the doc. 
     """
     stemmed_token = apply_stemmer_token(token)
     term_frequency = raw_term_frequency[filename].get(stemmed_token, 0)
@@ -197,15 +197,12 @@ def query(qstring):
         if token not in english_stopwords:
             query_stemmed.append(apply_stemmer_token(token))
 
-    #query_tf = {token: 0 for token in query_stemmed}
-    #for token in query_stemmed:
-    #    if token in query_tf:
-    #        query_tf[token] += 1
     query_tf = {}
     for token in query_stemmed:
-        if token not in query_tf:
-            query_tf[token] = 0
-        query_tf[token] += 1
+        if token in query_tf:
+            query_tf[token] += 1
+        else:
+            query_tf[token] = 1
         
     query_log_tf = {}
     for token, term_frequency in query_tf.items():
@@ -275,3 +272,80 @@ print("(%s, %.12f)" % query("war offenses"))
 print("(%s, %.12f)" % query("british war"))
 print("(%s, %.12f)" % query("texas government"))
 print("(%s, %.12f)" % query("cuba government"))
+
+# Practice cases worked out solutions by hand to check if the code is working correctly.
+#print(inaugural_addresses['Doc1.txt'])
+#print(inaugural_addresses['Doc2.txt'])
+#print(inaugural_addresses['Doc3.txt'])
+
+#print("inaugrual tokens: ", inaugural_tokens['01_washington_1789.txt'][:10])
+#print("inaugrual tokens: ", inaugural_tokens['Doc1.txt'])
+#print("inaugrual tokens: ", inaugural_tokens['Doc2.txt'])
+#print("inaugrual tokens: ", inaugural_tokens['Doc3.txt'])
+
+#print("without stopwords", inaugural_tokens_nostopwords['01_washington_1789.txt'][:10])
+#print("without stopwords", inaugural_tokens_nostopwords['Doc1.txt'])
+#print("without stopwords", inaugural_tokens_nostopwords['Doc2.txt'])
+#print("without stopwords", inaugural_tokens_nostopwords['Doc3.txt'])
+
+#print("lenght of stemmed", len(inaugural_stemmed))
+#print("stemmed", inaugural_stemmed['01_washington_1789.txt'][:10])
+#print("stemmed", inaugural_stemmed['Doc1.txt'])
+#print("stemmed", inaugural_stemmed['Doc2.txt'])
+#print("stemmed", inaugural_stemmed['Doc3.txt'])
+
+#print("raw term frequency", raw_term_frequency['01_washington_1789.txt'])
+#print("raw term frequency", raw_term_frequency['Doc1.txt'])
+#print("raw term frequency", raw_term_frequency['Doc2.txt'])
+#print("raw term frequency", raw_term_frequency['Doc3.txt'])
+
+#print("normalized values", magnitudes['Doc1.txt'])
+#print("normalized values", magnitudes['Doc2.txt'])
+#print("normalized values", magnitudes['Doc3.txt'])
+
+#print("%.12f" % getidf('dog'))
+#print("%.12f" % getidf('cat'))
+#print("%.12f" % getidf('ran'))
+#print("%.12f" % getidf('far'))
+#print("%.12f" % getidf('away'))
+#print("%.12f" % getidf('fast'))
+#print("%.12f" % getidf('owner'))
+#print("%.12f" % getidf('bob'))
+
+#print("%.12f" % getweight('Doc1.txt','dog'))
+#print("%.12f" % getweight('Doc1.txt','cat'))
+#print("%.12f" % getweight('Doc1.txt','ran'))
+#print("%.12f" % getweight('Doc1.txt','far'))
+#print("%.12f" % getweight('Doc1.txt','away'))
+#print("%.12f" % getweight('Doc1.txt','fast'))
+#print("%.12f" % getweight('Doc1.txt','owner'))
+#print("%.12f" % getweight('Doc1.txt','bob'))
+
+#print("%.12f" % getweight('Doc2.txt','dog'))
+#print("%.12f" % getweight('Doc2.txt','cat'))
+#print("%.12f" % getweight('Doc2.txt','ran'))
+#print("%.12f" % getweight('Doc2.txt','far'))
+#print("%.12f" % getweight('Doc2.txt','away'))
+#print("%.12f" % getweight('Doc2.txt','fast'))
+#print("%.12f" % getweight('Doc2.txt','owner'))
+#print("%.12f" % getweight('Doc2.txt','bob'))
+#print("--------------")
+#print("%.12f" % getweight('Doc3.txt','dog'))
+#print("%.12f" % getweight('Doc3.txt','cat'))
+#print("%.12f" % getweight('Doc3.txt','ran'))
+#print("%.12f" % getweight('Doc3.txt','far'))
+#print("%.12f" % getweight('Doc3.txt','away'))
+#print("%.12f" % getweight('Doc3.txt','fast'))
+#print("%.12f" % getweight('Doc3.txt','owner'))
+#print("%.12f" % getweight('Doc3.txt','bob'))
+#print("--------------")
+
+#print("(%s, %.12f)" % query("dog")) # doc 1
+#print("(%s, %.12f)" % query("cat")) # doc 3
+#print("(%s, %.12f)" % query("ran")) # doc 1
+#print("(%s, %.12f)" % query("far")) # doc 1
+#print("(%s, %.12f)" % query("away")) # doc 2
+#print("(%s, %.12f)" % query("fast")) # doc 1
+#print("(%s, %.12f)" % query("owner")) # doc 1
+#print("(%s, %.12f)" % query("bob")) # doc 1
+#print("(%s, %.12f)" % query("dog cat")) # doc 3
